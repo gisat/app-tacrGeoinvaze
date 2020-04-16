@@ -1,8 +1,7 @@
 import {connect} from 'react-redux';
 import _ from 'lodash';
 
-import {Action} from '@gisatcz/ptr-state';
-import {Select} from '@gisatcz/ptr-atoms';
+import {Action, Select} from '@gisatcz/ptr-state';
 import {utils} from '@gisatcz/ptr-utils';
 
 import presentation from './presentation';
