@@ -3,7 +3,9 @@ import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import {reduxBatch} from '@manaflair/redux-batch';
 import {connectRouter, routerMiddleware} from 'connected-react-router';
-import {createBrowserHistory} from 'history';
+import {createBrowserHistory, createMemoryHistory} from 'history';
+import {init as initApp} from '../app';
+import {isServer} from '../utils';
 
 // base types
 import {
@@ -41,16 +43,22 @@ import {
     windowsReducers,
 } from '@gisatcz/ptr-state';
 
-export const history = createBrowserHistory();
+export const history = isServer
+    ? createMemoryHistory()
+    : createBrowserHistory();
 
-let middleware = applyMiddleware(thunk, routerMiddleware(history));
-if (process.env.NODE_ENV === 'development') {
-    middleware = applyMiddleware(thunk, logger, routerMiddleware(history));
+function createMiddleware() {
+    if (process.env.NODE_ENV === 'development' && !isServer) {
+        return applyMiddleware(thunk, logger, routerMiddleware(history));
+    }
+
+    return applyMiddleware(thunk, routerMiddleware(history));
 }
 
-// Redux store
-export default createStore(
-    combineReducers({
+const middleware = createMiddleware();
+
+function createReducer() {
+    return combineReducers({
         app: appReducers,
         areas: areasReducers,
         areaRelations: areaRelationsReducers,
@@ -84,12 +92,33 @@ export default createStore(
         users: usersReducers,
         views: viewsReducers,
         windows: windowsReducers,
-    }),
-    compose(
+    });
+}
+
+function createEnhancer() {
+    return compose(
         reduxBatch,
         middleware,
         reduxBatch,
         applyMiddleware(thunk),
         reduxBatch
-    )
-);
+    );
+}
+
+function createAppStore() {
+    const isPreloaded = !isServer && window.__PRELOADED_STATE__ != null;
+    const initialState = isPreloaded ? window.__PRELOADED_STATE__ : {};
+    if (isPreloaded) {
+        delete window.__PRELOADED_STATE__;
+    }
+
+    const store = createStore(createReducer(), initialState, createEnhancer());
+
+    if (!isPreloaded) {
+        initApp(store);
+    }
+
+    return store;
+}
+
+export default createAppStore;
