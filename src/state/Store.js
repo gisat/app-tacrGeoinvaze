@@ -95,8 +95,10 @@ function createReducer() {
     });
 }
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
 function createEnhancer() {
-    return compose(
+    return composeEnhancers(
         reduxBatch,
         middleware,
         reduxBatch,
