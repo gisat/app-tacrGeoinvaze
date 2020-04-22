@@ -1,7 +1,19 @@
+import {EnvironmentPlugin} from 'webpack';
+import url from 'url';
+import packageConfig from './package.json';
+
 module.exports = {
     modifyWebpack: (config) => {
         const newConfig = {
             ...config,
+            plugins: [
+                ...config.plugins,
+                new EnvironmentPlugin({
+                    PUBLIC_URL: new url.URL(
+                        packageConfig.homepage
+                    ).pathname.replace(/\/$/, ''),
+                }),
+            ],
             module: {
                 rules: [
                     {

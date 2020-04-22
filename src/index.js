@@ -16,8 +16,11 @@ const Application = () => (
     </Provider>
 );
 
-if (isServer) {
-    ReactDOM.hydrate(<Application />, document.getElementById('root'));
-} else {
-    ReactDOM.render(<Application />, document.getElementById('root'));
+function renderApp() {
+    const rootEl = document.getElementById('root');
+    const render =
+        isServer || rootEl.hasChildNodes() ? ReactDOM.hydrate : ReactDOM.render;
+    render(<Application />, rootEl);
 }
+
+renderApp();
