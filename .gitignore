@@ -8,6 +8,7 @@
 
 # production
 /build
+/server-build
 
 # config rewrites
 /src/config/rewrites.js

@@ -6,8 +6,6 @@ import {utils} from '@gisatcz/ptr-utils';
 
 import presentation from './presentation';
 
-const filter = {application: true};
-
 const mapStateToProps = (state, ownProps) => {
     return {
         caseSelectOpen: Select.components.get(
