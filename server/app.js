@@ -10,24 +10,26 @@ const clientBuildPath = path.resolve(__dirname, '../client');
 
 function handleUniversalRender(req, res) {
     const context = {};
-    const store = createStore();
+    const {store, readyP} = createStore();
 
-    const appEl = (
-        <Provider store={store}>
-            <StaticRouter location={req.url} context={context}>
-                <App />
-            </StaticRouter>
-        </Provider>
-    );
+    return readyP.then(() => {
+        const appEl = (
+            <Provider store={store}>
+                <StaticRouter location={req.url} context={context}>
+                    <App />
+                </StaticRouter>
+            </Provider>
+        );
 
-    if (context.url) {
-        res.redirect(301, context.url);
-        return;
-    }
+        if (context.url) {
+            res.redirect(301, context.url);
+            return;
+        }
 
-    req.store = store;
+        req.store = store;
 
-    return appEl;
+        return appEl;
+    });
 }
 
 function resolveHtmlFilenameByRequest(req) {

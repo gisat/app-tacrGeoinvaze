@@ -95,7 +95,8 @@ function createReducer() {
     });
 }
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancers =
+    (!isServer && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
 function createEnhancer() {
     return composeEnhancers(
@@ -117,10 +118,10 @@ function createAppStore() {
     const store = createStore(createReducer(), initialState, createEnhancer());
 
     if (!isPreloaded) {
-        initApp(store);
+        return {store: store, readyP: initApp(store)};
     }
 
-    return store;
+    return {store: store, readyP: Promise.resolve()};
 }
 
 export default createAppStore;

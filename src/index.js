@@ -6,7 +6,7 @@ import {BrowserRouter} from 'react-router-dom';
 import createStore from './state/Store';
 import {isServer} from './utils';
 
-const store = createStore();
+const {store} = createStore();
 
 const Application = () => (
     <Provider store={store}>
