@@ -16,9 +16,6 @@ class LayerControls extends React.PureComponent {
 
 		this.switchToModel = this.switchToModel.bind(this);
 		this.switchToActual = this.switchToActual.bind(this);
-	}
-
-	componentDidMount() {
 		this.props.onMount();
 	}
 

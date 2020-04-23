@@ -47,15 +47,80 @@ export const history = isServer
 	? createMemoryHistory()
 	: createBrowserHistory();
 
-function createMiddleware() {
-	if (process.env.NODE_ENV === 'development' && !isServer) {
-		return applyMiddleware(thunk, logger, routerMiddleware(history));
-	}
+function createRequestCounter() {
+	let v = 0;
+	let p = null;
+	let resolve = function () {};
+	let reject = function () {};
 
-	return applyMiddleware(thunk, routerMiddleware(history));
+	const modify = (d) => {
+		v += d;
+		if (v === 0) {
+			p = null;
+			resolve();
+		}
+	};
+
+	return {
+		onRequest: function () {
+			modify(+1);
+		},
+		onResponse: function () {
+			modify(-1);
+		},
+		pendingRequests: function () {
+			return v;
+		},
+		createReadyP: function () {
+			if (p != null) {
+				return p;
+			}
+
+			if (v === 0) {
+				return Promise.resolve();
+			}
+
+			p = new Promise((_resolve, _reject) => {
+				resolve = _resolve;
+				reject = _reject;
+			});
+
+			const rejectCurrent = reject;
+
+			// do no block indefinitely if requests are waiting too long or there is a bug somewhere
+			setTimeout(() => rejectCurrent(), 10000);
+
+			return p;
+		},
+	};
 }
 
-const middleware = createMiddleware();
+function createAsyncMiddleware(requestCounter) {
+	return function (store) {
+		return function (next) {
+			return function (action) {
+				const res = next(action);
+				if (res instanceof Promise) {
+					requestCounter.onRequest();
+					res.finally(() => requestCounter.onResponse());
+				}
+
+				return res;
+			};
+		};
+	};
+}
+
+function createMiddleware(requestCounter) {
+	const middlewares = [
+		createAsyncMiddleware(requestCounter),
+		thunk,
+		// process.env.NODE_ENV === 'development' && !isServer && logger,
+		routerMiddleware(history),
+	];
+
+	return applyMiddleware(...middlewares.filter((v) => v !== false));
+}
 
 function createReducer() {
 	return combineReducers({
@@ -98,16 +163,19 @@ function createReducer() {
 const composeEnhancers =
 	(!isServer && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
-function createEnhancer() {
+function createEnhancer(requestCounter) {
 	return composeEnhancers(
 		reduxBatch,
-		middleware,
-		reduxBatch,
-		applyMiddleware(thunk),
+		createMiddleware(requestCounter),
 		reduxBatch
 	);
 }
 
+/**
+ * Returns object with keys `store`, `readyP`.
+ * - `readyP` - Promise that resolves once the app is initialized (helpful with SSR).
+ * - `store` - Redux store.
+ */
 function createAppStore() {
 	const isPreloaded = !isServer && window.__PRELOADED_STATE__ != null;
 	const initialState = isPreloaded ? window.__PRELOADED_STATE__ : {};
@@ -115,13 +183,21 @@ function createAppStore() {
 		delete window.__PRELOADED_STATE__;
 	}
 
-	const store = createStore(createReducer(), initialState, createEnhancer());
+	const requestCounter = createRequestCounter();
+	const store = createStore(
+		createReducer(),
+		initialState,
+		createEnhancer(requestCounter)
+	);
 
 	if (!isPreloaded) {
-		return {store: store, readyP: initApp(store)};
+		initApp(store);
 	}
 
-	return {store: store, readyP: Promise.resolve()};
+	return {
+		store: store,
+		requestCounter: requestCounter,
+	};
 }
 
 export default createAppStore;

@@ -7,9 +7,6 @@ import CaseImage from '../../../CaseImage';
 class CaseSelect extends React.PureComponent {
 	constructor(props) {
 		super(props);
-	}
-
-	componentDidMount() {
 		this.props.onMount();
 	}
 
