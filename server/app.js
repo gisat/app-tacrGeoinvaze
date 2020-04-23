@@ -2,7 +2,7 @@ const path = require('path');
 const React = require('react');
 import {createReactAppExpress} from '@cra-express/core';
 import {StaticRouter} from 'react-router-dom';
-import {Provider} from 'react-redux';
+import {Provider} from '@gisatcz/ptr-state';
 import createStore from '../src/state/Store';
 import {renderToString} from 'react-dom/server';
 import {UIDReset} from 'react-uid';
