@@ -9,7 +9,7 @@ module.exports = function override(config, env) {
 			// "@gisatcz/ptr-core": "C:/Users/pvlach/DATA/ptr-core",
 			// "@gisatcz/ptr-components": "C:/Users/pvlach/DATA/ptr-components/dist",
 			// "@gisatcz/ptr-deprecated": "C:/Users/pvlach/DATA/ptr-deprecated/dist",
-			"@gisatcz/ptr-state": "T:/_repo/ptr-state",
+			// "@gisatcz/ptr-state": "T:/_repo/ptr-state",
 		}
 	};
 
