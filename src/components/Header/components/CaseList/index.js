@@ -1,10 +1,11 @@
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import {compose} from 'redux';
 
 import {Action, Select} from '@gisatcz/ptr-state';
-import {utils} from '@gisatcz/ptr-utils';
 
 import presentation from './presentation';
+import {withComponentId} from '../../../../hoc';
 
 let order = [['nameDisplay', 'ascending']];
 
@@ -22,8 +23,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToPropsFactory = () => {
-	const componentId = 'tacrGeoinvaze_CaseList_' + utils.randomString(6);
-
 	return (dispatch, ownProps) => {
 		let filter = {
 			tagKeys: {
@@ -41,18 +40,18 @@ const mapDispatchToPropsFactory = () => {
 						order,
 						1,
 						20,
-						componentId
+						ownProps.componentId
 					)
 				);
 			},
 			onUnmount: () => {
-				dispatch(Action.cases.useIndexedClear(componentId));
+				dispatch(Action.cases.useIndexedClear(ownProps.componentId));
 			},
 		};
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToPropsFactory
+export default compose(
+	withComponentId('tacrGeoinvaze_CaseList_'),
+	connect(mapStateToProps, mapDispatchToPropsFactory)
 )(presentation);

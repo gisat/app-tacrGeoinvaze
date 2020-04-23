@@ -5,6 +5,7 @@ import {StaticRouter} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import createStore from '../src/state/Store';
 import {renderToString} from 'react-dom/server';
+import {UIDReset} from 'react-uid';
 
 const App = require('../src/app').App;
 const clientBuildPath = path.resolve(__dirname, '../client');
@@ -48,11 +49,13 @@ function handleUniversalRender(req, res) {
 
 	const createEl = () => {
 		const appEl = (
-			<Provider store={store}>
-				<StaticRouter location={req.url} context={context}>
-					<App />
-				</StaticRouter>
-			</Provider>
+			<UIDReset>
+				<Provider store={store}>
+					<StaticRouter location={req.url} context={context}>
+						<App />
+					</StaticRouter>
+				</Provider>
+			</UIDReset>
 		);
 
 		if (context.url) {

@@ -1,9 +1,10 @@
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import {compose} from 'redux';
 import {Select, Action} from '@gisatcz/ptr-state';
 
 import presentation from './presentation';
-import {utils} from '@gisatcz/ptr-utils';
+import {withComponentId} from '../../hoc';
 
 const filterByActive = {application: true};
 const periodsOrder = [['period', 'descending']];
@@ -32,49 +33,45 @@ const mapStateToProps = (state) => {
 	};
 };
 
-const mapDispatchToPropsFactory = () => {
-	const componentId = 'tacrGeoinvaze_CaseDetail_' + utils.randomString(6);
-
-	return (dispatch, ownProps) => {
-		return {
-			onMount: () => {
-				// TODO order
-				dispatch(
-					Action.periods.useIndexed(
-						filterByActive,
-						null,
-						periodsOrder,
-						1,
-						200,
-						componentId
-					)
-				);
-				dispatch(
-					Action.layerTemplates.useIndexed(
-						filterByActive,
-						null,
-						null,
-						1,
-						20,
-						componentId
-					)
-				);
-			},
-			onUnmount: () => {
-				dispatch(Action.periods.useIndexedClear(componentId));
-				dispatch(Action.layerTemplates.useIndexedClear(componentId));
-			},
-			setActiveLayerTemplate: (key) => {
-				dispatch(Action.layerTemplates.setActiveKey(key));
-			},
-			setActivePeriod: (key) => {
-				dispatch(Action.periods.setActiveKey(key));
-			},
-		};
+const mapDispatchToPropsFactory = (dispatch, {componentId}) => {
+	return {
+		onMount: () => {
+			// TODO order
+			dispatch(
+				Action.periods.useIndexed(
+					filterByActive,
+					null,
+					periodsOrder,
+					1,
+					200,
+					componentId
+				)
+			);
+			dispatch(
+				Action.layerTemplates.useIndexed(
+					filterByActive,
+					null,
+					null,
+					1,
+					20,
+					componentId
+				)
+			);
+		},
+		onUnmount: () => {
+			dispatch(Action.periods.useIndexedClear(componentId));
+			dispatch(Action.layerTemplates.useIndexedClear(componentId));
+		},
+		setActiveLayerTemplate: (key) => {
+			dispatch(Action.layerTemplates.setActiveKey(key));
+		},
+		setActivePeriod: (key) => {
+			dispatch(Action.periods.setActiveKey(key));
+		},
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToPropsFactory
+export default compose(
+	withComponentId('tacrGeoinvaze_CaseDetail_'),
+	connect(mapStateToProps, mapDispatchToPropsFactory)
 )(presentation);
