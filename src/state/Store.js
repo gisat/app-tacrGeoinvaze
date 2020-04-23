@@ -5,40 +5,7 @@ import {init as initApp} from '../app';
 import {isServer} from '../utils';
 
 // base types
-import {
-	appReducers,
-	areasReducers,
-	areaRelationsReducers,
-	attributeRelationsReducers,
-	attributesReducers,
-	attributeSetsReducers,
-	attributeDataReducers,
-	attributeDataSourcesReducers,
-	casesReducers,
-	chartsReducers,
-	componentsReducers,
-	layerPeriodsReducers,
-	layerTemplatesReducers,
-	layersTreesReducers,
-	mapsReducers,
-	periodsReducers,
-	placesReducers,
-	scenariosReducers,
-	scopesReducers,
-	screensReducers,
-	selectionsReducers,
-	snapshotsReducers,
-	spatialDataReducers,
-	spatialDataSourcesReducers,
-	spatialVectorDataSourcesReducers,
-	spatialRelationsReducers,
-	stylesReducers,
-	attributeStatisticsReducers,
-	tagsReducers,
-	usersReducers,
-	viewsReducers,
-	windowsReducers,
-} from '@gisatcz/ptr-state';
+import { baseStores } from '@gisatcz/ptr-state';
 
 export const history = isServer
 	? createMemoryHistory()
@@ -121,39 +88,8 @@ function createMiddleware(requestCounter) {
 
 function createReducer() {
 	return combineReducers({
-		app: appReducers,
-		areas: areasReducers,
-		areaRelations: areaRelationsReducers,
-		attributes: attributesReducers,
-		attributeRelations: attributeRelationsReducers,
-		attributeStatistics: attributeStatisticsReducers,
-		attributeSets: attributeSetsReducers,
-		attributeData: attributeDataReducers,
-		attributeDataSources: attributeDataSourcesReducers,
-		cases: casesReducers,
-		charts: chartsReducers,
-		components: componentsReducers,
-		layerPeriods: layerPeriodsReducers,
-		layerTemplates: layerTemplatesReducers,
-		layersTrees: layersTreesReducers,
-		maps: mapsReducers,
-		periods: periodsReducers,
-		places: placesReducers,
+		...baseStores,
 		router: connectRouter(history),
-		scenarios: scenariosReducers,
-		scopes: scopesReducers,
-		screens: screensReducers,
-		selections: selectionsReducers,
-		snapshots: snapshotsReducers,
-		spatialData: spatialDataReducers,
-		spatialDataSources: spatialDataSourcesReducers,
-		spatialVectorDataSources: spatialVectorDataSourcesReducers,
-		spatialRelations: spatialRelationsReducers,
-		styles: stylesReducers,
-		tags: tagsReducers,
-		users: usersReducers,
-		views: viewsReducers,
-		windows: windowsReducers,
 	});
 }
 
