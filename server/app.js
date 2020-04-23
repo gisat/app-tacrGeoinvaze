@@ -4,43 +4,11 @@ import {createReactAppExpress} from '@cra-express/core';
 import {StaticRouter} from 'react-router-dom';
 import {Provider} from '@gisatcz/ptr-state';
 import createStore from '../src/state/Store';
-import {renderToString} from 'react-dom/server';
 import {UIDReset} from 'react-uid';
+import {createRenderFn, handleRenderHtml} from './utils';
 
 const App = require('../src/app').App;
 const clientBuildPath = path.resolve(__dirname, '../client');
-
-/**
- * Returns function that repeats creating element until there are no more requests pending or if
- * `maxRetries` was exceeded.
- */
-function createRenderFn(requestCounter, createElFn, maxRetries) {
-	let remainingRetries = maxRetries;
-
-	const renderFn = function () {
-		const el = createElFn();
-
-		if (remainingRetries <= 0) {
-			return el; // let's not keep retrying indefinitely
-		}
-
-		// render component to find out if there are any pending requests
-		// triggered by rendered components
-		renderToString(el);
-
-		if (requestCounter.pendingRequests() !== 0) {
-			return requestCounter.createReadyP().then(() => {
-				remainingRetries -= 1;
-
-				return renderFn();
-			});
-		}
-
-		return el;
-	};
-
-	return renderFn;
-}
 
 function handleUniversalRender(req, res) {
 	const context = {};
@@ -72,12 +40,13 @@ function handleUniversalRender(req, res) {
 }
 
 function resolveHtmlFilenameByRequest(req) {
-	return 'gisat/app-tacrGeoinvaze';
+	return process.env.PUBLIC_URL.replace(/^\//, '');
 }
 
 const app = createReactAppExpress({
 	clientBuildPath,
 	resolveHtmlFilenameByRequest,
+	handleRender: handleRenderHtml,
 	universalRender: handleUniversalRender,
 	onFinish(req, res, html) {
 		const state = req.store.getState();

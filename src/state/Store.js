@@ -1,8 +1,16 @@
-import { createStore, combineReducers, applyMiddleware, compose, thunk, logger, reduxBatch } from '@gisatcz/ptr-state';
+import {
+	createStore,
+	combineReducers,
+	applyMiddleware,
+	compose,
+	thunk,
+	logger,
+	reduxBatch,
+} from '@gisatcz/ptr-state';
 import {connectRouter, routerMiddleware} from 'connected-react-router';
 import {createBrowserHistory, createMemoryHistory} from 'history';
 import {init as initApp} from '../app';
-import {isServer} from '../utils';
+import {isServer, createAsyncMiddleware, createRequestCounter} from '../utils';
 
 // base types
 import {
@@ -43,70 +51,6 @@ import {
 export const history = isServer
 	? createMemoryHistory()
 	: createBrowserHistory();
-
-function createRequestCounter() {
-	let v = 0;
-	let p = null;
-	let resolve = function () {};
-	let reject = function () {};
-
-	const modify = (d) => {
-		v += d;
-		if (v === 0) {
-			p = null;
-			resolve();
-		}
-	};
-
-	return {
-		onRequest: function () {
-			modify(+1);
-		},
-		onResponse: function () {
-			modify(-1);
-		},
-		pendingRequests: function () {
-			return v;
-		},
-		createReadyP: function () {
-			if (p != null) {
-				return p;
-			}
-
-			if (v === 0) {
-				return Promise.resolve();
-			}
-
-			p = new Promise((_resolve, _reject) => {
-				resolve = _resolve;
-				reject = _reject;
-			});
-
-			const rejectCurrent = reject;
-
-			// do no block indefinitely if requests are waiting too long or there is a bug somewhere
-			setTimeout(() => rejectCurrent(), 10000);
-
-			return p;
-		},
-	};
-}
-
-function createAsyncMiddleware(requestCounter) {
-	return function (store) {
-		return function (next) {
-			return function (action) {
-				const res = next(action);
-				if (res instanceof Promise) {
-					requestCounter.onRequest();
-					res.finally(() => requestCounter.onResponse());
-				}
-
-				return res;
-			};
-		};
-	};
-}
 
 function createMiddleware(requestCounter) {
 	const middlewares = [
