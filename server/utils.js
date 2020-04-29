@@ -1,4 +1,5 @@
 import {renderToString} from 'react-dom/server';
+import {Helmet} from 'react-helmet';
 
 /**
  * Returns function that repeats creating element until there are no more requests pending or if
@@ -13,10 +14,13 @@ export function createRenderFn(requestCounter, createElFn, maxRetries) {
 			return;
 		}
 
-		const html = renderToString(el);
+		const data = {
+			html: renderToString(el),
+			helmet: Helmet.renderStatic(),
+		};
 
 		if (remainingRetries <= 0) {
-			return html; // let's not keep retrying indefinitely
+			return data; // let's not keep retrying indefinitely
 		}
 
 		if (requestCounter.pendingRequests() !== 0) {
@@ -27,7 +31,7 @@ export function createRenderFn(requestCounter, createElFn, maxRetries) {
 			});
 		}
 
-		return html;
+		return data;
 	};
 
 	return renderFn;

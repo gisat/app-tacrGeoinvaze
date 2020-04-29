@@ -1,5 +1,5 @@
-const path = require('path');
-const React = require('react');
+import path from 'path';
+import React from 'react';
 import {createReactAppExpress} from '@cra-express/core';
 import {StaticRouter} from 'react-router-dom';
 import {Provider} from '@gisatcz/ptr-state';
@@ -47,8 +47,13 @@ const app = createReactAppExpress({
 	clientBuildPath,
 	resolveHtmlFilenameByRequest,
 	universalRender: handleUniversalRender,
-	handleRender(req, res, html, templateHtml, options) {
+	handleRender(req, res, data, rawTemplateHtml, options) {
 		const state = req.store.getState();
+
+		const templateHtml = rawTemplateHtml.replace(
+			'<title>Loading...</title>',
+			data.helmet.title.toString()
+		);
 
 		const [beginHtml, endHtml] = templateHtml.split(
 			`<div id="root"></div>`
@@ -57,7 +62,7 @@ const app = createReactAppExpress({
 			state
 		).replace(/</g, '\\u003c')};</script>`;
 
-		const finalHtml = `${beginHtml}<div id="root">${html}</div>${preloadedStateHtml}${endHtml}`;
+		const finalHtml = `${beginHtml}<div id="root">${data.html}</div>${preloadedStateHtml}${endHtml}`;
 
 		res.send(finalHtml);
 	},
