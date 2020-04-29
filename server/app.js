@@ -5,7 +5,7 @@ import {StaticRouter} from 'react-router-dom';
 import {Provider} from '@gisatcz/ptr-state';
 import createStore from '../src/state/Store';
 import {UIDReset} from 'react-uid';
-import {createRenderFn, handleRenderHtml} from './utils';
+import {createRenderFn} from './utils';
 
 const App = require('../src/app').App;
 const clientBuildPath = path.resolve(__dirname, '../client');
@@ -46,19 +46,19 @@ function resolveHtmlFilenameByRequest(req) {
 const app = createReactAppExpress({
 	clientBuildPath,
 	resolveHtmlFilenameByRequest,
-	handleRender: handleRenderHtml,
 	universalRender: handleUniversalRender,
-	onFinish(req, res, html) {
+	handleRender(req, res, html, templateHtml, options) {
 		const state = req.store.getState();
-		const finalHtml = html.replace(
-			'<!--{{SCRIPT}}-->',
-			`<script>
-      window.__PRELOADED_STATE__ = ${JSON.stringify(state).replace(
-			/</g,
-			'\\u003c'
-		)};
-    </script>`
+
+		const [beginHtml, endHtml] = templateHtml.split(
+			`<div id="root"></div>`
 		);
+		const preloadedStateHtml = `<script>window.__PRELOADED_STATE__ = ${JSON.stringify(
+			state
+		).replace(/</g, '\\u003c')};</script>`;
+
+		const finalHtml = `${beginHtml}<div id="root">${html}</div>${preloadedStateHtml}${endHtml}`;
+
 		res.send(finalHtml);
 	},
 });

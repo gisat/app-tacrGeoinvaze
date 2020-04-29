@@ -32,23 +32,3 @@ export function createRenderFn(requestCounter, createElFn, maxRetries) {
 
 	return renderFn;
 }
-
-/**
- * Replacement for `handleRender` function from `cra-universal` package.
- *
- * Original deals with react element, this one deals with html to prevent one redundant rendering.
- */
-export function handleRenderHtml(req, res, html, htmlData, options) {
-	const segments = htmlData.split(`<div id="root">`);
-	if (options.onEndReplace) {
-		segments[1] = options.onEndReplace(segments[1]);
-	}
-
-	const finalStr = `${segments[0]}<div id="root">${html}${segments[1]}`;
-	if (options.onFinish) {
-		options.onFinish(req, res, finalStr);
-		return;
-	}
-
-	res.send(finalStr);
-}
