@@ -8,7 +8,9 @@
 
 # production
 /build
+/dist
 /server-build
+/public/static/media
 
 # config rewrites
 /src/config/rewrites.js

@@ -1,11 +1,6 @@
 import {EnvironmentPlugin} from 'webpack';
-import url from 'url';
-import packageConfig from './package.json';
 
-const publicUrl = new url.URL(packageConfig.homepage).pathname.replace(
-	/\/$/,
-	''
-);
+const publicUrl = '';
 
 module.exports = {
 	modifyWebpack: (config) => {

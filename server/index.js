@@ -1,3 +1,5 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import app from './app';
 
 const PORT = process.env.PORT || 3001;

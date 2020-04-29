@@ -13,7 +13,7 @@ export function createRenderFn(requestCounter, createElFn, maxRetries) {
 			return;
 		}
 
-		const html = renderToString();
+		const html = renderToString(el);
 
 		if (remainingRetries <= 0) {
 			return html; // let's not keep retrying indefinitely

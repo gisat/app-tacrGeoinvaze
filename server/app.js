@@ -40,7 +40,7 @@ function handleUniversalRender(req, res) {
 }
 
 function resolveHtmlFilenameByRequest(req) {
-	return process.env.PUBLIC_URL.replace(/^\//, '');
+	return process.env.PUBLIC_URL;
 }
 
 const app = createReactAppExpress({
