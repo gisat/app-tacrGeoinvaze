@@ -40,13 +40,14 @@ function createHandler(app, name) {
  * @param {Function} options.app Function accepting request called when route is matched
  * @param {Function} options.notFoundHandler Function accepting request called when no route is matched
  * @param {string} options.rootUrl
+ * @param {string=} options.currentUrl Useful when doing SSR
  *
  * Request is map with optional keys:
  * - `match`
  *   - matched route. It is object with keys `data` (object with key `name`), `pathParams`
  * - `queryString`
  */
-export function create({routes, app, notFoundHandler, rootUrl}) {
+export function create({routes, app, notFoundHandler, rootUrl, currentUrl}) {
 	const navigoRoutes = Object.fromEntries(
 		Object.entries(routes).map(([url, name]) => {
 			return [url, {as: name, uses: createHandler(app, name)}];
@@ -56,7 +57,7 @@ export function create({routes, app, notFoundHandler, rootUrl}) {
 	const navigo = new Navigo(rootUrl);
 	navigo.on(navigoRoutes);
 	navigo.notFound(createHandler(notFoundHandler));
-	navigo.resolve();
+	navigo.resolve(currentUrl);
 
 	return {
 		nav: (url) => {

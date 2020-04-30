@@ -55,7 +55,7 @@ function createEnhancer(requestCounter) {
  * - `readyP` - Promise that resolves once the app is initialized (helpful with SSR).
  * - `store` - Redux store.
  */
-function createAppStore() {
+function createAppStore(options) {
 	const isPreloaded = !isServer && window.__PRELOADED_STATE__ != null;
 	const initialState = isPreloaded ? window.__PRELOADED_STATE__ : {};
 	if (isPreloaded) {
@@ -69,9 +69,14 @@ function createAppStore() {
 		createEnhancer(requestCounter)
 	);
 
-	if (!isPreloaded) {
-		initApp(store);
-	}
+	const absPath =
+		options?.absPath ??
+		window.location.protocol +
+			'//' +
+			window.location.host +
+			process.env.PUBLIC_URL;
+
+	initApp(store, {absPath, isPreloaded, currentUrl: options?.currentUrl});
 
 	return {
 		store: store,

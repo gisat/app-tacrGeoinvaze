@@ -11,8 +11,9 @@ const App = require('../src/app').App;
 const clientBuildPath = path.resolve(__dirname, '../client');
 
 function handleUniversalRender(req, res) {
+	const absPath = req.protocol + '//' + req.hostname + process.env.PUBLIC_URL;
 	const context = {};
-	const {store, requestCounter} = createStore();
+	const {store, requestCounter} = createStore({absPath, currentUrl: req.url});
 	req.store = store;
 
 	const createEl = () => {

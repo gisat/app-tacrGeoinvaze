@@ -25,7 +25,6 @@ import {
 import {connect} from '@gisatcz/ptr-state';
 
 const path = process.env.PUBLIC_URL;
-const absPath = window.location.protocol + '//' + window.location.host + path;
 
 let router = null;
 
@@ -47,7 +46,7 @@ function requestToPage(request) {
 	};
 }
 
-function init(Store) {
+function init(Store, {absPath, isPreloaded, currentUrl}) {
 	/**
 	 * Creates router instance that can be used to manipulat urls.
 	 *
@@ -60,6 +59,7 @@ function init(Store) {
 	 */
 	router = createRouter({
 		rootUrl: absPath,
+		currentUrl,
 		routes,
 		app: (request) => {
 			const page = requestToPage(request);
@@ -69,6 +69,10 @@ function init(Store) {
 			Store.dispatch(changePage(null));
 		},
 	});
+
+	if (isPreloaded) {
+		return;
+	}
 
 	Store.dispatch(Action.app.updateLocalConfiguration(config));
 	localesUtils.addI18nResources('common', {cz});
