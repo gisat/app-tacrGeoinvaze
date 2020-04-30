@@ -12,16 +12,16 @@
 
 import Navigo from 'navigo';
 
-function createHandler(app, name) {
+function createHandler(app, data) {
 	return function () {
 		const [params, query] =
 			arguments.length === 1 ? [null, arguments[0]] : arguments;
 
 		const request = {};
 
-		if (name != null) {
+		if (data != null) {
 			request.match = {
-				data: {name: name},
+				data,
 				pathParams: params == null ? {} : params,
 			};
 		}
@@ -34,9 +34,16 @@ function createHandler(app, name) {
 	};
 }
 
+function normalizeData(data) {
+	if (typeof data === 'string') {
+		return {name: data};
+	}
+
+	return data;
+}
 /**
  * @param {Object} options
- * @param {Object} options.routes Keys are paths in format `/path/:param`, values are names
+ * @param {Object} options.routes Keys are paths in format `/path/:param`, values are route data (object with key 'name' or string)
  * @param {Function} options.app Function accepting request called when route is matched
  * @param {Function} options.notFoundHandler Function accepting request called when no route is matched
  * @param {string} options.rootUrl
@@ -44,13 +51,15 @@ function createHandler(app, name) {
  *
  * Request is map with optional keys:
  * - `match`
- *   - matched route. It is object with keys `data` (object with key `name`), `pathParams`
+ *   - matched route. It is object with keys `data` (route data object), `pathParams`
  * - `queryString`
  */
 export function create({routes, app, notFoundHandler, rootUrl, currentUrl}) {
 	const navigoRoutes = Object.fromEntries(
-		Object.entries(routes).map(([url, name]) => {
-			return [url, {as: name, uses: createHandler(app, name)}];
+		Object.entries(routes).map(([url, providedData]) => {
+			const data = normalizeData(providedData);
+
+			return [url, {as: data.name, uses: createHandler(app, data)}];
 		})
 	);
 

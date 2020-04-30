@@ -18,15 +18,10 @@ import {AppContainer} from '@gisatcz/ptr-components';
 import App from './components/App';
 
 import {create as createRouter} from './router';
-import {
-	pageSelector as reduxRouterPageSelector,
-	changePage,
-} from './redux-router';
-import {connect} from '@gisatcz/ptr-state';
+import {changePage} from './redux-router';
+import {init as initCore, router} from './core';
 
 const path = process.env.PUBLIC_URL;
-
-let router = null;
 
 /**
  * Converts request taken from router into application specific representation
@@ -46,6 +41,118 @@ function requestToPage(request) {
 	};
 }
 
+function createRoutes(Store) {
+	const setCase = (key) => {
+		Store.dispatch(Action.cases.setActiveKey(key));
+		Store.dispatch(
+			Action.components.set(
+				'tacrGeoinvaze_CaseSelect',
+				'caseSelectOpen',
+				false
+			)
+		);
+	};
+
+	const setLayer = (template) => {
+		Store.dispatch(Action.layerTemplates.setActiveKey(template));
+	};
+
+	const setPeriod = (period) => {
+		Store.dispatch(Action.periods.setActiveKey(period));
+	};
+
+	return {
+		'': {
+			name: 'homepage',
+			handler: function (request) {
+				Store.dispatch(
+					Action.components.set(
+						'tacrGeoinvaze_CaseSelect',
+						'caseSelectOpen',
+						true
+					)
+				);
+			},
+		},
+		'/:caseKey': {
+			name: 'case',
+			handler: function (request) {
+				const state = Store.getState();
+
+				const caseKey = request.match.pathParams.caseKey;
+				const periodKey = Select.periods.getActiveKey(state);
+				const layerTemplate = Select.layerTemplates.getActiveKey(state);
+
+				if (periodKey != null && layerTemplate != null) {
+					router.nav(
+						router.pathFor('period', {
+							caseKey,
+							periodKey,
+							layerTemplate,
+						})
+					);
+				} else {
+					setCase(caseKey);
+				}
+			},
+		},
+		'/:caseKey/:layerTemplate/:periodKey': {
+			name: 'period',
+			handler: function (request) {
+				const {
+					caseKey,
+					layerTemplate,
+					periodKey,
+				} = request.match.pathParams;
+				setCase(caseKey);
+				setLayer(layerTemplate);
+				setPeriod(periodKey);
+			},
+		},
+	};
+}
+
+function getDefaultTemplate(state) {
+	const current = Select.layerTemplates.getActiveKey(state);
+	if (current != null) {
+		return current;
+	}
+
+	const actualExpansionTemplateKey = Select.app.getConfiguration(
+		state,
+		'templates.actualExpansion'
+	);
+	if (
+		actualExpansionTemplateKey &&
+		Select.layerTemplates.getActiveKey(state) == null
+	) {
+		return actualExpansionTemplateKey;
+	}
+}
+
+function getDefaultPeriod(state) {
+	const current = Select.periods.getActiveKey(state);
+	if (current != null) {
+		return current;
+	}
+
+	const latestPeriodInArray = Select.periods.getIndexed(
+		state,
+		{application: true},
+		null,
+		[['period', 'descending']],
+		1,
+		1
+	);
+	if (
+		latestPeriodInArray &&
+		latestPeriodInArray[0] &&
+		Select.periods.getActiveKey(state) == null
+	) {
+		return latestPeriodInArray[0].key;
+	}
+}
+
 function init(Store, {absPath, isPreloaded, currentUrl}) {
 	/**
 	 * Creates router instance that can be used to manipulat urls.
@@ -57,18 +164,25 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 	 * Not found handler is same as app handler (takes request), except it doesn't contain request.match
 	 * (as no route was matched).
 	 */
-	router = createRouter({
+	const router = createRouter({
 		rootUrl: absPath,
 		currentUrl,
-		routes,
+		routes: createRoutes(Store),
 		app: (request) => {
 			const page = requestToPage(request);
 			Store.dispatch(changePage(page.name, page.params));
+
+			const handler = request.match.data.handler;
+			if (handler != null) {
+				handler(request);
+			}
 		},
 		notFoundHandler: (request) => {
 			Store.dispatch(changePage(null));
 		},
 	});
+
+	initCore({router});
 
 	if (isPreloaded) {
 		return;
@@ -88,18 +202,8 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 	Store.dispatch(
 		Action.app.setLocalConfiguration('geometriesAccuracy', 0.001)
 	);
-	Store.dispatch(Action.app.loadConfiguration()).then(() => {
-		let state = Store.getState();
-		let actualExpansionTemplateKey = Select.app.getConfiguration(
-			state,
-			'templates.actualExpansion'
-		);
-		if (actualExpansionTemplateKey)
-			Store.dispatch(
-				Action.layerTemplates.setActiveKey(actualExpansionTemplateKey)
-			);
-	});
-	Store.dispatch(
+	const configurationP = Store.dispatch(Action.app.loadConfiguration());
+	const periodsP = Store.dispatch(
 		Action.periods.useIndexed(
 			{application: true},
 			null,
@@ -108,20 +212,35 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 			1,
 			'tacrGeoinvaze'
 		)
-	).then(() => {
-		let state = Store.getState();
-		let latestPeriodInArray = Select.periods.getIndexed(
-			state,
-			{application: true},
-			null,
-			[['period', 'descending']],
-			1,
-			1
-		);
-		if (latestPeriodInArray && latestPeriodInArray[0])
+	);
+	Promise.all([configurationP, periodsP]).then(() => {
+		const state = Store.getState();
+
+		const pathParams = {
+			caseKey: Select.cases.getActiveKey(state),
+			layerTemplate: getDefaultTemplate(state),
+			periodKey: getDefaultPeriod(state),
+		};
+
+		if (
+			pathParams.caseKey != null &&
+			pathParams.layerTemplate != null &&
+			pathParams.periodKey != null
+		) {
+			router.nav(router.pathFor('period', pathParams));
+
+			return;
+		}
+
+		if (pathParams.periodKey != null) {
+			Store.dispatch(Action.periods.setActiveKey(pathParams.periodKey));
+		}
+
+		if (pathParams.layerTemplate != null) {
 			Store.dispatch(
-				Action.periods.setActiveKey(latestPeriodInArray[0].key)
+				Action.layerTemplates.setActiveKey(pathParams.layerTemplate)
 			);
+		}
 	});
 	Store.dispatch(
 		Action.maps.addMap({
@@ -164,158 +283,11 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 
 const ConnectedAppContainer = connects.AppContainer(AppContainer);
 
-const selectPage = (state) => reduxRouterPageSelector(state, 'router2');
-
-function UserList() {
-	return <div>User list</div>;
-}
-
-function UserView() {
-	return <div>User View</div>;
-}
-
-function PrintPage() {
-	return <div>Print page</div>;
-}
-
-function NotFound() {
-	return <div>Page not found</div>;
-}
-
-/**
- * Normal navigation that just opens different page in browser.
- * No redux involved.
- */
-function Nav() {
-	return (
-		<ul>
-			<li>
-				<a href="/user/list">UserList</a>
-			</li>
-			<li>
-				<a href="/user/5/view">UserView</a>
-			</li>
-			<li>
-				<a href="/print-page/p1/p2?q1=2&q2=3">PrintPage</a>
-			</li>
-		</ul>
-	);
-}
-
-/**
- * Navigation that when clicked on link changes url without reloading page.
- * It's up to the app alone to handle that change. There is also fallback
- * in case `onClick` wouldn't be called (disabled js) or user wanted to e.g.
- * open link in new tab.
- */
-function _NavUsingRouter({dispatch}) {
-	const data = [
-		{
-			name: 'UserList',
-			url: router.pathFor('user-list'),
-		},
-		{
-			name: 'UserView',
-			url: router.pathFor('user-view', {id: 5}),
-		},
-		{
-			name: 'PrintPage',
-			url:
-				router.pathFor('print-page', {
-					routeParam1: 'p1',
-					routeParam2: 'p2',
-				}) + '?&q1=2&q2=3',
-		},
-	];
-
-	return (
-		<ul>
-			{data.map((link) => (
-				<li key={link.name}>
-					<a
-						href={link.url}
-						onClick={(e) => {
-							e.preventDefault();
-							router.nav(link.url);
-						}}
-					>
-						{link.name}
-					</a>
-				</li>
-			))}
-		</ul>
-	);
-}
-
-const NavUsingRouter = connect(null, (dispatch, ownProps) => ({
-	dispatch,
-}))(_NavUsingRouter);
-
-/**
- * App specific data structure for description of individual pages.
- *
- * It contains page data keyed by route name/page name. We convert it to routes
- * using our function `pagesToRoutes` and pass it to router.
- */
-const pages = {
-	'user-list': {
-		path: '/user/list',
-		view: UserList,
-	},
-	'user-view': {
-		path: '/user/:id/view',
-		view: UserView,
-	},
-	'print-page': {
-		path: '/print-page/:routeParam1/:routeParam2',
-		view: PrintPage,
-	},
-};
-
-const pagesToRoutes = (pages) =>
-	Object.fromEntries(
-		Object.entries(pages).map(([name, data]) => [data.path, name])
-	);
-
-const routes = pagesToRoutes(pages);
-// const routes = {
-// 	'/user/list': 'user-list',
-// 	'/user/:id/view': 'user-view',
-// 	'/print-page/:routeParam1/:routeParam2': 'print-page',
-// };
-
-function _PageContent(props) {
-	/**
-	 * Let's take page from app specific data structure and render `NotFound` view
-	 * if view was not specified in the data.
-	 */
-	const View = pages[props.page?.name]?.view ?? NotFound;
-
-	return (
-		<div>
-			page data: {JSON.stringify(props.page)}
-			<br />
-			<br />
-			<View />
-		</div>
-	);
-}
-
-const PageContent = connect((state, ownProps) => ({
-	page: selectPage(state),
-}))(_PageContent);
-
 const AppComponent = () => {
 	return (
 		<>
 			<Helmet defaultTitle="Geoinformační portál biologických invazí" />
 			<ConnectedAppContainer appKey="tacrGeoinvaze">
-				<Nav />
-				<br />
-				Nav using router with href fallback:
-				<NavUsingRouter />
-				<br />
-				<PageContent />
 				<Route
 					path={path + '/:caseKey?/:layerTemplateKey?/:periodKey?'}
 					component={App}

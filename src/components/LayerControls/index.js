@@ -5,6 +5,7 @@ import {Select, Action} from '@gisatcz/ptr-state';
 
 import presentation from './presentation';
 import {withComponentId} from '../../hoc';
+import {router} from '../../core';
 
 const filterByActive = {application: true};
 const periodsOrder = [['period', 'descending']];
@@ -30,6 +31,7 @@ const mapStateToProps = (state) => {
 		),
 		activeLayerTemplateKey: Select.layerTemplates.getActiveKey(state),
 		activePeriodKey: Select.periods.getActiveKey(state),
+		activeCase: Select.cases.getActive(state),
 	};
 };
 
@@ -62,16 +64,32 @@ const mapDispatchToPropsFactory = (dispatch, {componentId}) => {
 			dispatch(Action.periods.useIndexedClear(componentId));
 			dispatch(Action.layerTemplates.useIndexedClear(componentId));
 		},
-		setActiveLayerTemplate: (key) => {
-			dispatch(Action.layerTemplates.setActiveKey(key));
-		},
-		setActivePeriod: (key) => {
-			dispatch(Action.periods.setActiveKey(key));
+		setActive: (caseKey, layerTemplate, period) => {
+			router.nav(
+				router.pathFor('period', {
+					caseKey,
+					layerTemplate,
+					periodKey: period,
+				})
+			);
 		},
 	};
 };
 
+function mergeProps(stateProps, dispatchProps, ownProps) {
+	const overrides = {
+		setActive: (layerTemplate, period) =>
+			dispatchProps.setActive(
+				stateProps.activeCase.key,
+				layerTemplate,
+				period
+			),
+	};
+
+	return {...ownProps, ...stateProps, ...dispatchProps, ...overrides};
+}
+
 export default compose(
 	withComponentId('tacrGeoinvaze_CaseDetail_'),
-	connect(mapStateToProps, mapDispatchToPropsFactory)
+	connect(mapStateToProps, mapDispatchToPropsFactory, mergeProps)
 )(presentation);

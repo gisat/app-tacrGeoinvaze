@@ -1,10 +1,10 @@
 import {connect} from '@gisatcz/ptr-state';
 import _ from 'lodash';
 
-import {Action, Select} from '@gisatcz/ptr-state';
-import {utils} from '@gisatcz/ptr-utils';
+import {Select} from '@gisatcz/ptr-state';
 
 import presentation from './presentation';
+import {router} from '../../../../core';
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -17,46 +17,33 @@ const mapStateToProps = (state, ownProps) => {
 	};
 };
 
-const mapDispatchToPropsFactory = () => {
-	const componentId = 'tacrGeoinvaze_CaseSelect_' + utils.randomString(6);
-
-	return (dispatch) => {
-		return {
-			openSelect: () => {
-				dispatch(
-					Action.components.set(
-						'tacrGeoinvaze_CaseSelect',
-						'caseSelectOpen',
-						true
-					)
-				);
-			},
-			closeSelect: () => {
-				dispatch(
-					Action.components.set(
-						'tacrGeoinvaze_CaseSelect',
-						'caseSelectOpen',
-						false
-					)
-				);
-			},
-			onMount: () => {},
-			onUnmount: () => {},
-			selectCase: (key) => {
-				dispatch(Action.cases.setActiveKey(key));
-				dispatch(
-					Action.components.set(
-						'tacrGeoinvaze_CaseSelect',
-						'caseSelectOpen',
-						false
-					)
-				);
-			},
-		};
+const mapDispatchToProps = () => {
+	return {
+		openSelect: () => {
+			router.nav(router.pathFor('homepage'));
+		},
+		closeSelect: (caseKey) => {
+			router.nav(router.pathFor('case', {caseKey: caseKey}));
+		},
+		onMount: () => {},
+		onUnmount: () => {},
+		selectCase: (key) => {
+			router.nav(router.pathFor('case', {caseKey: key}));
+		},
 	};
 };
 
+function mergeProps(stateProps, dispatchProps, ownProps) {
+	const overrides = {
+		closeSelect: () =>
+			dispatchProps.closeSelect(stateProps.activeCase?.key),
+	};
+
+	return {...ownProps, ...stateProps, ...dispatchProps, ...overrides};
+}
+
 export default connect(
 	mapStateToProps,
-	mapDispatchToPropsFactory
+	mapDispatchToProps,
+	mergeProps
 )(presentation);

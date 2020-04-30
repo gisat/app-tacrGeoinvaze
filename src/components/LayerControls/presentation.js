@@ -2,13 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import './style.scss';
-import {
-	Button,
-	ButtonGroup,
-	ButtonSwitch,
-	ButtonSwitchOption,
-	Select,
-} from '@gisatcz/ptr-atoms';
+import {ButtonSwitch, ButtonSwitchOption} from '@gisatcz/ptr-atoms';
 
 class LayerControls extends React.PureComponent {
 	constructor(props) {
@@ -30,26 +24,26 @@ class LayerControls extends React.PureComponent {
 			switch (value) {
 				case 'gis1':
 					if (templates.modelGis && templates.modelGis.year1) {
-						this.props.setActiveLayerTemplate(
-							templates.modelGis.year1
+						this.props.setActive(
+							templates.modelGis.year1,
+							latestPeriodKey
 						);
-						this.props.setActivePeriod(latestPeriodKey);
 					}
 					break;
 				case 'gis3':
 					if (templates.modelGis && templates.modelGis.year3) {
-						this.props.setActiveLayerTemplate(
-							templates.modelGis.year3
+						this.props.setActive(
+							templates.modelGis.year3,
+							latestPeriodKey
 						);
-						this.props.setActivePeriod(latestPeriodKey);
 					}
 					break;
 				case 'gis10':
 					if (templates.modelGis && templates.modelGis.year10) {
-						this.props.setActiveLayerTemplate(
-							templates.modelGis.year10
+						this.props.setActive(
+							templates.modelGis.year10,
+							latestPeriodKey
 						);
-						this.props.setActivePeriod(latestPeriodKey);
 					}
 					break;
 				case 'gam':
@@ -57,11 +51,11 @@ class LayerControls extends React.PureComponent {
 						templates.modelBiomod &&
 						templates.modelBiomod.generalisedLinear
 					) {
-						this.props.setActiveLayerTemplate(
+						this.props.setActive(
 							this.props.templateKeys.modelBiomod
-								.generalisedLinear
+								.generalisedLinear,
+							latestPeriodKey
 						);
-						this.props.setActivePeriod(latestPeriodKey);
 					}
 					break;
 				case 'gbm':
@@ -69,10 +63,11 @@ class LayerControls extends React.PureComponent {
 						templates.modelBiomod &&
 						templates.modelBiomod.gradientBoosting
 					) {
-						this.props.setActiveLayerTemplate(
-							this.props.templateKeys.modelBiomod.gradientBoosting
+						this.props.setActive(
+							this.props.templateKeys.modelBiomod
+								.gradientBoosting,
+							latestPeriodKey
 						);
-						this.props.setActivePeriod(latestPeriodKey);
 					}
 					break;
 				case 'maxent':
@@ -80,10 +75,10 @@ class LayerControls extends React.PureComponent {
 						templates.modelBiomod &&
 						templates.modelBiomod.maximumEntropy
 					) {
-						this.props.setActiveLayerTemplate(
-							this.props.templateKeys.modelBiomod.maximumEntropy
+						this.props.setActive(
+							this.props.templateKeys.modelBiomod.maximumEntropy,
+							latestPeriodKey
 						);
-						this.props.setActivePeriod(latestPeriodKey);
 					}
 					break;
 			}
@@ -94,8 +89,7 @@ class LayerControls extends React.PureComponent {
 		if (periodKey && this.props.templateKeys) {
 			let actualTemplateKey = this.props.templateKeys.actualExpansion;
 
-			this.props.setActiveLayerTemplate(actualTemplateKey);
-			this.props.setActivePeriod(periodKey);
+			this.props.setActive(actualTemplateKey, periodKey);
 		}
 	}
 

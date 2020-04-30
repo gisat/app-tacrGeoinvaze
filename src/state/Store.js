@@ -40,7 +40,7 @@ function createReducer() {
 }
 
 const composeEnhancers =
-	(!isServer && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+	window?.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({}) || compose;
 
 function createEnhancer(requestCounter) {
 	return composeEnhancers(
