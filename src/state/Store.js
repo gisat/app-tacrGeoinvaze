@@ -13,7 +13,8 @@ import {init as initApp} from '../app';
 import {isServer, createAsyncMiddleware, createRequestCounter} from '../utils';
 
 // base types
-import { baseStores } from '@gisatcz/ptr-state';
+import {baseStores} from '@gisatcz/ptr-state';
+import {reducer as reduxRouterReducer} from '../redux-router';
 
 export const history = isServer
 	? createMemoryHistory()
@@ -34,6 +35,7 @@ function createReducer() {
 	return combineReducers({
 		...baseStores,
 		router: connectRouter(history),
+		router2: reduxRouterReducer,
 	});
 }
 
