@@ -25,6 +25,7 @@ import {
 import {connect} from '@gisatcz/ptr-state';
 
 const path = process.env.PUBLIC_URL;
+const absPath = window.location.protocol + '//' + window.location.host + path;
 
 let router = null;
 
@@ -58,6 +59,7 @@ function init(Store) {
 	 * (as no route was matched).
 	 */
 	router = createRouter({
+		rootUrl: absPath,
 		routes,
 		app: (request) => {
 			const page = requestToPage(request);
@@ -186,7 +188,9 @@ function Nav() {
 			<li>
 				<a href="/user/list">UserList</a>
 			</li>
-			<a href="/user/5/view">UserView</a>
+			<li>
+				<a href="/user/5/view">UserView</a>
+			</li>
 			<li>
 				<a href="/print-page/p1/p2?q1=2&q2=3">PrintPage</a>
 			</li>

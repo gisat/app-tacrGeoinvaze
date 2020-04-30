@@ -16,7 +16,7 @@ function createHandler(app, name) {
 	return function () {
 		const [params, query] =
 			arguments.length === 1 ? [null, arguments[0]] : arguments;
-		console.log('handler', name);
+
 		const request = {};
 
 		if (name != null) {
@@ -39,20 +39,21 @@ function createHandler(app, name) {
  * @param {Object} options.routes Keys are paths in format `/path/:param`, values are names
  * @param {Function} options.app Function accepting request called when route is matched
  * @param {Function} options.notFoundHandler Function accepting request called when no route is matched
+ * @param {string} options.rootUrl
  *
  * Request is map with optional keys:
  * - `match`
  *   - matched route. It is object with keys `data` (object with key `name`), `pathParams`
  * - `queryString`
  */
-export function create({routes, app, notFoundHandler}) {
+export function create({routes, app, notFoundHandler, rootUrl}) {
 	const navigoRoutes = Object.fromEntries(
 		Object.entries(routes).map(([url, name]) => {
 			return [url, {as: name, uses: createHandler(app, name)}];
 		})
 	);
 
-	const navigo = new Navigo('http://localhost:3000');
+	const navigo = new Navigo(rootUrl);
 	navigo.on(navigoRoutes);
 	navigo.notFound(createHandler(notFoundHandler));
 	navigo.resolve();
