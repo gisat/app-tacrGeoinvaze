@@ -160,8 +160,6 @@ function init(Store, {absPath, isPreloaded, currentUrl, navHandler}) {
 	 * In case of url change, redux selector possibly retrieves different data and passes them
 	 * into some the component.
 	 *
-	 * Not found handler is same as app handler (takes request), except it doesn't contain request.match
-	 * (as no route was matched).
 	 */
 	const router = createRouter({
 		rootUrl: absPath,

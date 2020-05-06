@@ -5,8 +5,9 @@
  * Format of request in handlers is based on ring spec: https://github.com/ring-clojure/ring/blob/master/SPEC
  * and reitit: https://github.com/metosin/reitit (`match` key).
  *
- * Current route syntax is just map with path as key and name as value. If we needed more, we could take
- * inspiration from reitit wich supports attaching arbitrary data to routes: https://metosin.github.io/reitit/basics/route_syntax.html
+ * Route syntax is just map with path as key and data as value.
+ * Data can be either string or object with property `name` and arbirary additional data.
+ * Inspiration was taken from reitit wich supports attaching arbitrary data to routes: https://metosin.github.io/reitit/basics/route_syntax.html
  * More sytaxes can be supported if needed.
  */
 
