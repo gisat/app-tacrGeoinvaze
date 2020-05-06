@@ -4,7 +4,6 @@ import {
 	applyMiddleware,
 	compose,
 	thunk,
-	logger,
 	reduxBatch,
 } from '@gisatcz/ptr-state';
 import {createBrowserHistory, createMemoryHistory} from 'history';

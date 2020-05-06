@@ -3,8 +3,6 @@ import {
 	Title,
 	TextBlock,
 	InvasivePotential,
-	Resources,
-	Resource,
 	Summary,
 	SexualReproduction,
 	AsexualReproduction,
