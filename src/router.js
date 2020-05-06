@@ -73,9 +73,9 @@ export function create({routes, app, notFoundHandler, rootUrl, currentUrl}) {
 			navigo.navigate(url);
 		},
 		redirect: (url) => {
-			navigo.pause();
+			navigo.historyAPIUpdateMethod('replaceState');
 			navigo.navigate(url);
-			navigo.resume();
+			navigo.historyAPIUpdateMethod('pushState');
 		},
 		refresh: () => {
 			navigo.resolve();

@@ -84,7 +84,7 @@ function createRoutes(Store) {
 				const layerTemplate = Select.layerTemplates.getActiveKey(state);
 
 				if (periodKey != null && layerTemplate != null) {
-					router.nav(
+					router.redirect(
 						router.pathFor('period', {
 							caseKey,
 							periodKey,
