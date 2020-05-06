@@ -1,5 +1,4 @@
 import React from 'react';
-import {Route} from 'react-router';
 import Helmet from 'react-helmet';
 
 import {Select, Action, connects} from '@gisatcz/ptr-state';
@@ -177,9 +176,6 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 				handler(request);
 			}
 		},
-		notFoundHandler: (request) => {
-			Store.dispatch(changePage(null));
-		},
 	});
 
 	initCore({router});
@@ -288,10 +284,7 @@ const AppComponent = () => {
 		<>
 			<Helmet defaultTitle="Geoinformační portál biologických invazí" />
 			<ConnectedAppContainer appKey="tacrGeoinvaze">
-				<Route
-					path={path + '/:caseKey?/:layerTemplateKey?/:periodKey?'}
-					component={App}
-				/>
+				<App />
 			</ConnectedAppContainer>
 		</>
 	);

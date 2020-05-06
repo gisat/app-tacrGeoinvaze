@@ -45,7 +45,7 @@ function normalizeData(data) {
  * @param {Object} options
  * @param {Object} options.routes Keys are paths in format `/path/:param`, values are route data (object with key 'name' or string)
  * @param {Function} options.app Function accepting request called when route is matched
- * @param {Function} options.notFoundHandler Function accepting request called when no route is matched
+ * @param {Function=} options.notFoundHandler Function accepting request called when no route is matched
  * @param {string} options.rootUrl
  * @param {string=} options.currentUrl Useful when doing SSR
  *
@@ -65,7 +65,9 @@ export function create({routes, app, notFoundHandler, rootUrl, currentUrl}) {
 
 	const navigo = new Navigo(rootUrl);
 	navigo.on(navigoRoutes);
-	navigo.notFound(createHandler(notFoundHandler));
+	if (notFoundHandler) {
+		navigo.notFound(createHandler(notFoundHandler));
+	}
 	navigo.resolve(currentUrl);
 
 	return {

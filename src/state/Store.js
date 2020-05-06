@@ -7,7 +7,6 @@ import {
 	logger,
 	reduxBatch,
 } from '@gisatcz/ptr-state';
-import {connectRouter, routerMiddleware} from 'connected-react-router';
 import {createBrowserHistory, createMemoryHistory} from 'history';
 import {init as initApp} from '../app';
 import {isServer, createAsyncMiddleware, createRequestCounter} from '../utils';
@@ -25,7 +24,6 @@ function createMiddleware(requestCounter) {
 		createAsyncMiddleware(requestCounter),
 		thunk,
 		// process.env.NODE_ENV === 'development' && !isServer && logger,
-		routerMiddleware(history),
 	];
 
 	return applyMiddleware(...middlewares.filter((v) => v !== false));
@@ -34,7 +32,6 @@ function createMiddleware(requestCounter) {
 function createReducer() {
 	return combineReducers({
 		...baseStores,
-		router: connectRouter(history),
 		router2: reduxRouterReducer,
 	});
 }
