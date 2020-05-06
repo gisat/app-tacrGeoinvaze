@@ -16,8 +16,7 @@ import {AppContainer} from '@gisatcz/ptr-components';
 
 import App from './components/App';
 
-import {create as createRouter} from './router';
-import {changePage} from './redux-router';
+import {changePage, create as createRouter} from '@gisatcz/ptr-router';
 import {init as initCore, router} from './core';
 
 const path = process.env.PUBLIC_URL;

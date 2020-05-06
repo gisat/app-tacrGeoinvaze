@@ -12,7 +12,7 @@ import {isServer, createAsyncMiddleware, createRequestCounter} from '../utils';
 
 // base types
 import {baseStores} from '@gisatcz/ptr-state';
-import {reducer as reduxRouterReducer} from '../redux-router';
+import {reducer as reduxRouterReducer} from '@gisatcz/ptr-router';
 
 export const history = isServer
 	? createMemoryHistory()
