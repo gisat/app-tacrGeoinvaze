@@ -152,7 +152,7 @@ function getDefaultPeriod(state) {
 	}
 }
 
-function init(Store, {absPath, isPreloaded, currentUrl}) {
+function init(Store, {absPath, isPreloaded, currentUrl, navHandler}) {
 	/**
 	 * Creates router instance that can be used to manipulat urls.
 	 *
@@ -167,6 +167,7 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 		rootUrl: absPath,
 		currentUrl,
 		routes: createRoutes(Store),
+		navHandler,
 		app: (request) => {
 			const page = requestToPage(request);
 			Store.dispatch(changePage(page.name, page.params));
@@ -223,7 +224,7 @@ function init(Store, {absPath, isPreloaded, currentUrl}) {
 			pathParams.layerTemplate != null &&
 			pathParams.periodKey != null
 		) {
-			router.nav(router.pathFor('period', pathParams));
+			router.redirect(router.pathFor('period', pathParams));
 
 			return;
 		}

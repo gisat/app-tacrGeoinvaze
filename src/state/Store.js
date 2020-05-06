@@ -37,7 +37,9 @@ function createReducer() {
 }
 
 const composeEnhancers =
-	window?.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({}) || compose;
+	(typeof window !== 'undefined' &&
+		window?.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?.({})) ||
+	compose;
 
 function createEnhancer(requestCounter) {
 	return composeEnhancers(
@@ -73,7 +75,12 @@ function createAppStore(options) {
 			window.location.host +
 			process.env.PUBLIC_URL;
 
-	initApp(store, {absPath, isPreloaded, currentUrl: options?.currentUrl});
+	initApp(store, {
+		absPath,
+		isPreloaded,
+		currentUrl: options?.currentUrl,
+		navHandler: options?.navHandler,
+	});
 
 	return {
 		store: store,

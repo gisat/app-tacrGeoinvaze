@@ -12,6 +12,8 @@
 
 import Navigo from 'navigo';
 
+import {isServer} from './utils';
+
 function createHandler(app, data) {
 	return function () {
 		const [params, query] =
@@ -46,6 +48,7 @@ function normalizeData(data) {
  * @param {Object} options.routes Keys are paths in format `/path/:param`, values are route data (object with key 'name' or string)
  * @param {Function} options.app Function accepting request called when route is matched
  * @param {Function=} options.notFoundHandler Function accepting request called when no route is matched
+ * @param {Function=} options.navHandler Function called instead of `nav` and `redirect` (useful for SSR)
  * @param {string} options.rootUrl
  * @param {string=} options.currentUrl Useful when doing SSR
  *
@@ -54,7 +57,14 @@ function normalizeData(data) {
  *   - matched route. It is object with keys `data` (route data object), `pathParams`
  * - `queryString`
  */
-export function create({routes, app, notFoundHandler, rootUrl, currentUrl}) {
+export function create({
+	routes,
+	app,
+	notFoundHandler,
+	rootUrl,
+	currentUrl,
+	navHandler,
+}) {
 	const navigoRoutes = Object.fromEntries(
 		Object.entries(routes).map(([url, providedData]) => {
 			const data = normalizeData(providedData);
@@ -70,20 +80,35 @@ export function create({routes, app, notFoundHandler, rootUrl, currentUrl}) {
 	}
 	navigo.resolve(currentUrl);
 
-	return {
-		nav: (url) => {
-			navigo.navigate(url);
-		},
-		redirect: (url) => {
-			navigo.historyAPIUpdateMethod('replaceState');
-			navigo.navigate(url);
-			navigo.historyAPIUpdateMethod('pushState');
-		},
-		refresh: () => {
-			navigo.resolve();
-		},
-		pathFor: (page, params) => {
-			return navigo.generate(page, params);
-		},
-	};
+	return navHandler
+		? {
+				nav: (url) => {
+					navHandler(url);
+				},
+				redirect: (url) => {
+					navHandler(url);
+				},
+				refresh: () => {
+					navigo.resolve();
+				},
+				pathFor: (page, params) => {
+					return navigo.generate(page, params);
+				},
+		  }
+		: {
+				nav: (url) => {
+					navigo.navigate(url);
+				},
+				redirect: (url) => {
+					navigo.historyAPIUpdateMethod('replaceState');
+					navigo.navigate(url);
+					navigo.historyAPIUpdateMethod('pushState');
+				},
+				refresh: () => {
+					navigo.resolve();
+				},
+				pathFor: (page, params) => {
+					return navigo.generate(page, params);
+				},
+		  };
 }

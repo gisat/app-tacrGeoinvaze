@@ -1,7 +1,6 @@
 import path from 'path';
 import React from 'react';
 import {createReactAppExpress} from '@cra-express/core';
-import {StaticRouter} from 'react-router-dom';
 import {Provider} from '@gisatcz/ptr-state';
 import createStore from '../src/state/Store';
 import {UIDReset} from 'react-uid';
@@ -12,23 +11,28 @@ const clientBuildPath = path.resolve(__dirname, '../client');
 
 function handleUniversalRender(req, res) {
 	const absPath = req.protocol + '//' + req.hostname + process.env.PUBLIC_URL;
-	const context = {};
-	const {store, requestCounter} = createStore({absPath, currentUrl: req.url});
+	let requiredUrl = req.url;
+	const navHandler = (url) => {
+		requiredUrl = url;
+	};
+	const {store, requestCounter} = createStore({
+		absPath,
+		currentUrl: req.url,
+		navHandler,
+	});
 	req.store = store;
 
 	const createEl = () => {
 		const appEl = (
 			<UIDReset>
 				<Provider store={store}>
-					<StaticRouter location={req.url} context={context}>
-						<App />
-					</StaticRouter>
+					<App />
 				</Provider>
 			</UIDReset>
 		);
 
-		if (context.url) {
-			res.redirect(301, context.url);
+		if (requiredUrl != req.url) {
+			res.redirect(301, requiredUrl);
 			return;
 		}
 
