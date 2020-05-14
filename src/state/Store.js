@@ -8,7 +8,11 @@ import {
 } from '@gisatcz/ptr-state';
 import {createBrowserHistory, createMemoryHistory} from 'history';
 import {init as initApp} from '../app';
-import {isServer, createAsyncMiddleware, createRequestCounter} from '../utils';
+import {
+	createRequestCounter,
+	createAsyncMiddleware,
+	isServer,
+} from '@gisatcz/ptr-core';
 
 // base types
 import {baseStores} from '@gisatcz/ptr-state';
