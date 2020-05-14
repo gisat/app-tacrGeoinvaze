@@ -12,7 +12,6 @@ import {isServer, createAsyncMiddleware, createRequestCounter} from '../utils';
 
 // base types
 import {baseStores} from '@gisatcz/ptr-state';
-import {reducer as reduxRouterReducer} from '@gisatcz/ptr-router';
 
 export const history = isServer
 	? createMemoryHistory()
@@ -29,10 +28,7 @@ function createMiddleware(requestCounter) {
 }
 
 function createReducer() {
-	return combineReducers({
-		...baseStores,
-		router2: reduxRouterReducer,
-	});
+	return combineReducers(baseStores);
 }
 
 const composeEnhancers =
