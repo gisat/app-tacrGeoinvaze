@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {App} from './app';
 import {Provider} from '@gisatcz/ptr-state';
 import createStore from './state/Store';
-import {isServer} from './utils';
+import {isServer} from '@gisatcz/ptr-core';
 
 const {store} = createStore();
 

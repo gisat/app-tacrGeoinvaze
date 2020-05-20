@@ -4,7 +4,7 @@ import {createReactAppExpress} from '@cra-express/core';
 import {Provider} from '@gisatcz/ptr-state';
 import createStore from '../src/state/Store';
 import {UIDReset} from 'react-uid';
-import {createRenderFn} from './utils';
+import {createRenderFn} from '@gisatcz/ptr-core';
 
 const App = require('../src/app').App;
 const clientBuildPath = path.resolve(__dirname, '../client');
@@ -22,7 +22,7 @@ function handleUniversalRender(req, res) {
 	});
 	req.store = store;
 
-	const createEl = () => {
+	const createElFn = () => {
 		const appEl = (
 			<UIDReset>
 				<Provider store={store}>
@@ -39,7 +39,10 @@ function handleUniversalRender(req, res) {
 		return appEl;
 	};
 
-	const renderFn = createRenderFn(requestCounter, createEl, 5);
+	const renderFn = createRenderFn({
+		requestCounter,
+		createElFn,
+	});
 
 	return requestCounter.createReadyP().then(() => renderFn());
 }

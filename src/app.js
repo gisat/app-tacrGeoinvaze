@@ -16,8 +16,7 @@ import {AppContainer} from '@gisatcz/ptr-components';
 
 import App from './components/App';
 
-import {create as createRouter} from './router';
-import {changePage} from './redux-router';
+import {create as createRouter} from '@gisatcz/ptr-router';
 import {init as initCore, router} from './core';
 
 const path = process.env.PUBLIC_URL;
@@ -166,15 +165,6 @@ function init(Store, {absPath, isPreloaded, currentUrl, navHandler}) {
 		currentUrl,
 		routes: createRoutes(Store),
 		navHandler,
-		app: (request) => {
-			const page = requestToPage(request);
-			Store.dispatch(changePage(page.name, page.params));
-
-			const handler = request.match.data.handler;
-			if (handler != null) {
-				handler(request);
-			}
-		},
 	});
 
 	initCore({router});
