@@ -104,7 +104,9 @@ class LayerControls extends React.PureComponent {
 		if (caseConfig && caseConfig.nothing) {
 			return (
 				<div className="tacrGeoinvaze-layer-controls">
-					{caseConfig.nothing}
+					<div className="tacrGeoinvaze-layer-message">
+						{caseConfig.nothing}
+					</div>
 				</div>
 			);
 		}
@@ -214,13 +216,13 @@ class LayerControls extends React.PureComponent {
 		let modelsInsert = null;
 
 		if (caseConfig && caseConfig.noModels) {
-			modelsInsert = <div>{caseConfig.noModels}</div>;
+			modelsInsert = <div className="tacrGeoinvaze-layer-message">{caseConfig.noModels}</div>;
 		} else {
 			let gisModelInsert = null;
 			let biomodModelInsert = null;
 
 			if (caseConfig && caseConfig.noGisModel) {
-				gisModelInsert = <div>{caseConfig.noGisModel}</div>
+				gisModelInsert = <div className="tacrGeoinvaze-layer-message">{caseConfig.noGisModel}</div>
 			} else {
 				gisModelInsert = (
 					<div
@@ -282,12 +284,12 @@ class LayerControls extends React.PureComponent {
 			}
 
 			if (caseConfig && caseConfig.noBiomodModel) {
-				biomodModelInsert = <div>{caseConfig.noBiomodModel}</div>
+				biomodModelInsert = <div className="tacrGeoinvaze-layer-message">{caseConfig.noBiomodModel}</div>
 			} else {
 				let biomodModelMessageInsert = null;
 				if (caseConfig && caseConfig.noBiomodParticularModel) {
 					biomodModelMessageInsert = _.map(caseConfig.noBiomodParticularModel, message =>
-						<div>{message}</div>
+						<div className="tacrGeoinvaze-layer-message">{message}</div>
 					);
 				}
 
