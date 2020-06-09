@@ -29,16 +29,14 @@ class CaseSelectContent extends React.PureComponent {
 						<div className="tacrGeoinvaze-case-select-content-intro">
 							<div>
 								<p>
-									Tento geoinformační portál je zaměřen na
-									vizualizaci distribuce invazních nepůvodních
-									druhů v rámci ČR. Pro druhy byly vytvořeny
-									mapy současného výskytu a predikční modely
-									možného výskytu. V mapách současného
-									rozšíření je možné též sledovat vývoj šíření
-									druhu podle délky trvání výskytu v zájmovém
-									území. Zobrazení výstupů modelů pak ukazuje
-									maximální možné rozšíření druhů a predikci v
-									časových horizontech.
+									Geoportál je zaměřen na zobrazení současného a predikovaného výskytu jednotlivých
+									invazních nepůvodních druhů rostlin a živočichů. Mapové výstupy predikcí je možné
+									využít pro odhad dalšího šíření druhů a tento odhad začlenit do rozhodovacího
+									procesu ohledně rizika rozšíření druhu do zájmové lokality (viz <a href="https://r.fzp.czu.cz/vyzkum/metodiky/Metodika_ZCHU_Berchova_TACR_zav_zpr_28012020.pdf" target="_blank" rel="noopener noreferrer">Metodika Monitoring
+									ohrožení zájmových lokalit šířením invazních nepůvodních druhů</a>). Zobrazení výstupů
+									modelů pak ukazuje maximální možné rozšíření druhů a predikci v časových
+									horizontech. V širším pohledu slouží mapy geoportálu jako podklad pro plánování
+									managementu krajiny na lokální úrovni.
 								</p>
 								<p>
 									Portál by měl sloužit orgánům státní správy
