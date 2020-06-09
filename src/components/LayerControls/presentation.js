@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+import _ from 'lodash';
 
+import casesConfig from '../../config/cases';
 import './style.scss';
 import {ButtonSwitch, ButtonSwitchOption} from '@gisatcz/ptr-atoms';
 
@@ -96,6 +98,16 @@ class LayerControls extends React.PureComponent {
 	render() {
 		const props = this.props;
 		const templateKeys = props.templateKeys;
+		const caseConfig = this.props.activeCase && casesConfig[this.props.activeCase.key];
+
+		// No data for case
+		if (caseConfig && caseConfig.nothing) {
+			return (
+				<div className="tacrGeoinvaze-layer-controls">
+					{caseConfig.nothing}
+				</div>
+			);
+		}
 
 		let actualExpansionInsert = null;
 		let actualExpansionActive =
@@ -199,108 +211,150 @@ class LayerControls extends React.PureComponent {
 				templateKeys.modelBiomod &&
 				templateKeys.modelBiomod.maximumEntropy);
 
+		let modelsInsert = null;
+
+		if (caseConfig && caseConfig.noModels) {
+			modelsInsert = <div>{caseConfig.noModels}</div>;
+		} else {
+			let gisModelInsert = null;
+			let biomodModelInsert = null;
+
+			if (caseConfig && caseConfig.noGisModel) {
+				gisModelInsert = <div>{caseConfig.noGisModel}</div>
+			} else {
+				gisModelInsert = (
+					<div
+						className={classNames('tacrGeoinvaze-model-gis', {
+							active: gis1active || gis3active || gis10active,
+						})}
+					>
+						<div className="tacrGeoinvaze-layer-title">
+							Model budoucího rozšíření &ndash; horizont
+						</div>
+						<div>
+							<ButtonSwitch onClick={this.switchToModel} ghost>
+								<ButtonSwitchOption
+									active={gis1active}
+									value={'gis1'}
+								>
+									krátkodobý
+								</ButtonSwitchOption>
+								<ButtonSwitchOption
+									active={gis3active}
+									value={'gis3'}
+								>
+									střednědobý
+								</ButtonSwitchOption>
+								<ButtonSwitchOption
+									active={gis10active}
+									value={'gis10'}
+								>
+									dlouhodobý
+								</ButtonSwitchOption>
+							</ButtonSwitch>
+						</div>
+
+						<div className="tacrGeoinvaze-layer-legend discrete">
+							<div>
+								<span>Pravděpodobnost rozšíření:</span>
+								<div className="tacrGeoinvaze-layer-legend-group">
+									<div className="tacrGeoinvaze-layer-legend-record">
+										<span style={{backgroundColor: '#f00'}} />
+										Vysoká
+									</div>
+									<div className="tacrGeoinvaze-layer-legend-record">
+										<span
+											style={{backgroundColor: '#FF7F00'}}
+										/>
+										Nízká
+									</div>
+									<div className="tacrGeoinvaze-layer-legend-record">
+										<span
+											style={{backgroundColor: '#7FBF00'}}
+										/>
+										Velmi nízká
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				);
+			}
+
+			if (caseConfig && caseConfig.noBiomodModel) {
+				biomodModelInsert = <div>{caseConfig.noBiomodModel}</div>
+			} else {
+				let biomodModelMessageInsert = null;
+				if (caseConfig && caseConfig.noBiomodParticularModel) {
+					biomodModelMessageInsert = _.map(caseConfig.noBiomodParticularModel, message =>
+						<div>{message}</div>
+					);
+				}
+
+				biomodModelInsert = (
+					<div
+						className={classNames('tacrGeoinvaze-model-biomod', {
+							active: gamActive || gbmActive || maxentActive,
+						})}
+					>
+						<div className="tacrGeoinvaze-layer-title">
+							Model maximálního možného rozšíření
+						</div>
+						<div>
+							<ButtonSwitch onClick={this.switchToModel} ghost>
+								<ButtonSwitchOption
+									active={gamActive}
+									value={'gam'}
+									disabled={caseConfig && caseConfig.noBiomodParticularModel && caseConfig.noBiomodParticularModel.noBiomodModelGAM}
+								>
+									GAM
+								</ButtonSwitchOption>
+								<ButtonSwitchOption
+									active={gbmActive}
+									value={'gbm'}
+									disabled={caseConfig && caseConfig.noBiomodParticularModel && caseConfig.noBiomodParticularModel.noBiomodModelGBM}
+								>
+									GBM
+								</ButtonSwitchOption>
+								<ButtonSwitchOption
+									active={maxentActive}
+									value={'maxent'}
+									disabled={caseConfig && caseConfig.noBiomodParticularModel && caseConfig.noBiomodParticularModel.noBiomodModelMAXENT}
+								>
+									MAXENT
+								</ButtonSwitchOption>
+							</ButtonSwitch>
+						</div>
+						<div className="tacrGeoinvaze-layer-legend continuous">
+							<div>
+								<span />
+								<div>
+									<div className="tacrGeoinvaze-layer-legend-point start">
+										0 %
+									</div>
+									<div className="tacrGeoinvaze-layer-legend-point end">
+										100 %
+									</div>
+								</div>
+							</div>
+						</div>
+						{biomodModelMessageInsert}
+					</div>
+				);
+			}
+
+			modelsInsert = (
+				<>
+					{gisModelInsert}
+					{biomodModelInsert}
+				</>
+			);
+		}
+
 		return (
 			<div className="tacrGeoinvaze-layer-controls">
 				{actualExpansionInsert}
-				<div
-					className={classNames('tacrGeoinvaze-model-gis', {
-						active: gis1active || gis3active || gis10active,
-					})}
-				>
-					<div className="tacrGeoinvaze-layer-title">
-						Model budoucího rozšíření &ndash; horizont
-					</div>
-					<div>
-						<ButtonSwitch onClick={this.switchToModel} ghost>
-							<ButtonSwitchOption
-								active={gis1active}
-								value={'gis1'}
-							>
-								krátkodobý
-							</ButtonSwitchOption>
-							<ButtonSwitchOption
-								active={gis3active}
-								value={'gis3'}
-							>
-								střednědobý
-							</ButtonSwitchOption>
-							<ButtonSwitchOption
-								active={gis10active}
-								value={'gis10'}
-							>
-								dlouhodobý
-							</ButtonSwitchOption>
-						</ButtonSwitch>
-					</div>
-
-					<div className="tacrGeoinvaze-layer-legend discrete">
-						<div>
-							<span>Pravděpodobnost rozšíření:</span>
-							<div className="tacrGeoinvaze-layer-legend-group">
-								<div className="tacrGeoinvaze-layer-legend-record">
-									<span style={{backgroundColor: '#f00'}} />
-									Vysoká
-								</div>
-								<div className="tacrGeoinvaze-layer-legend-record">
-									<span
-										style={{backgroundColor: '#FF7F00'}}
-									/>
-									Nízká
-								</div>
-								<div className="tacrGeoinvaze-layer-legend-record">
-									<span
-										style={{backgroundColor: '#7FBF00'}}
-									/>
-									Velmi nízká
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div
-					className={classNames('tacrGeoinvaze-model-biomod', {
-						active: gamActive || gbmActive || maxentActive,
-					})}
-				>
-					<div className="tacrGeoinvaze-layer-title">
-						Model maximálního možného rozšíření
-					</div>
-					<div>
-						<ButtonSwitch onClick={this.switchToModel} ghost>
-							<ButtonSwitchOption
-								active={gamActive}
-								value={'gam'}
-							>
-								GAM
-							</ButtonSwitchOption>
-							<ButtonSwitchOption
-								active={gbmActive}
-								value={'gbm'}
-							>
-								GBM
-							</ButtonSwitchOption>
-							<ButtonSwitchOption
-								active={maxentActive}
-								value={'maxent'}
-							>
-								MAXENT
-							</ButtonSwitchOption>
-						</ButtonSwitch>
-					</div>
-					<div className="tacrGeoinvaze-layer-legend continuous">
-						<div>
-							<span />
-							<div>
-								<div className="tacrGeoinvaze-layer-legend-point start">
-									0 %
-								</div>
-								<div className="tacrGeoinvaze-layer-legend-point end">
-									100 %
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				{modelsInsert}
 			</div>
 		);
 	}
