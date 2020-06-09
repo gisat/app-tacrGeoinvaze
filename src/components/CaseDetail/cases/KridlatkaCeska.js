@@ -27,7 +27,11 @@ const KridlatkaCeska = (props) => (
 		<Title
 			name="Křídlatka česká"
 			nameSynonyms=""
-			latinName="Reynoutria bohemica"
+			latinName={
+				<>
+				Reynoutria <em>&times;</em>bohemica
+				</>
+			}
 			latinNameSynonyms="Fallopia bohemica"
 		/>
 		<Summary>

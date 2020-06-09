@@ -27,7 +27,11 @@ const TopolKanadsky = (props) => (
 		<Title
 			name="Topol kanadský"
 			nameSynonyms=""
-			latinName="Populus canadensis"
+			latinName={
+				<>
+					Populus <em>&times;</em>canadensis
+				</>
+			}
 			latinNameSynonyms="Populus euroamericana/Populus deltoides"
 		/>
 		<Summary>
