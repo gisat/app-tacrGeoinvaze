@@ -27,30 +27,32 @@ class CaseSelectContent extends React.PureComponent {
 					</div>
 					<div className="tacrGeoinvaze-case-select-content-info">
 						<div className="tacrGeoinvaze-case-select-content-intro">
-							<div>
-								<p>
-									Geoportál je zaměřen na zobrazení současného a predikovaného výskytu jednotlivých
-									invazních nepůvodních druhů rostlin a živočichů. Mapové výstupy predikcí je možné
-									využít pro odhad dalšího šíření druhů a tento odhad začlenit do rozhodovacího
-									procesu ohledně rizika rozšíření druhu do zájmové lokality (viz <a href="https://r.fzp.czu.cz/vyzkum/metodiky/Metodika_ZCHU_Berchova_TACR_zav_zpr_28012020.pdf" target="_blank" rel="noopener noreferrer">Metodika Monitoring
-									ohrožení zájmových lokalit šířením invazních nepůvodních druhů</a>). Zobrazení výstupů
-									modelů pak ukazuje maximální možné rozšíření druhů a predikci v časových
-									horizontech. V širším pohledu slouží mapy geoportálu jako podklad pro plánování
-									managementu krajiny na lokální úrovni.
-								</p>
-								<p>
-									Portál by měl sloužit orgánům státní správy
-									a územní samosprávy, stejně tak soukromým
-									vlastníkům pozemků, honiteb a správcům
-									lesních pozemků. Na základě aktuálního
-									rozšíření či potenciálního nebezpečí
-									rozšíření invazních druhů je možno navrhnout
-									cílené postupy monitoringu a likvidace
-									invazních druhů v zájmovém území, popřípadě
-									žádat o státní finanční příspěvky na
-									likvidaci a management invazních nepůvodních
-									druhů.
-								</p>
+							<div className="tacrGeoinvaze-case-select-content-intro-scroll">
+								<div>
+									<p>
+										Geoportál je zaměřen na zobrazení současného a predikovaného výskytu jednotlivých
+										invazních nepůvodních druhů rostlin a živočichů. Mapové výstupy predikcí je možné
+										využít pro odhad dalšího šíření druhů a tento odhad začlenit do rozhodovacího
+										procesu ohledně rizika rozšíření druhu do zájmové lokality (viz <a href="https://r.fzp.czu.cz/vyzkum/metodiky/Metodika_ZCHU_Berchova_TACR_zav_zpr_28012020.pdf" target="_blank" rel="noopener noreferrer">Metodika Monitoring
+										ohrožení zájmových lokalit šířením invazních nepůvodních druhů</a>). Zobrazení výstupů
+										modelů pak ukazuje maximální možné rozšíření druhů a predikci v časových
+										horizontech. V širším pohledu slouží mapy geoportálu jako podklad pro plánování
+										managementu krajiny na lokální úrovni.
+									</p>
+									<p>
+										Portál by měl sloužit orgánům státní správy
+										a územní samosprávy, stejně tak soukromým
+										vlastníkům pozemků, honiteb a správcům
+										lesních pozemků. Na základě aktuálního
+										rozšíření či potenciálního nebezpečí
+										rozšíření invazních druhů je možno navrhnout
+										cílené postupy monitoringu a likvidace
+										invazních druhů v zájmovém území, popřípadě
+										žádat o státní finanční příspěvky na
+										likvidaci a management invazních nepůvodních
+										druhů.
+									</p>
+								</div>
 							</div>
 							<div className="tacrGeoinvaze-case-select-content-logos">
 								<a

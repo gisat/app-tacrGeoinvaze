@@ -52,8 +52,9 @@
 }
 .tacrGeoinvaze-case-select-content-intro > div:first-child,
 .tacrGeoinvaze-case-select-content-content {
-	padding-left: 8rem;
-	flex-basis: 60rem;
+	margin-left: 6rem;
+	flex-basis: 54rem;
+	padding-left: 2rem;
 }
 .tacrGeoinvaze-case-select-content-logos {
 	flex-grow: 1;
@@ -82,21 +83,25 @@
   height: 14rem;
 	position: relative;
 }
-//.tacrGeoinvaze-case-select-content.showIntro .tacrGeoinvaze-case-select-content-intro > div {
-//	height: 100%;
-//	padding-bottom: 1rem;
-//	overflow-y: auto;
-//}
-//.tacrGeoinvaze-case-select-content.showIntro .tacrGeoinvaze-case-select-content-intro::after {
-//  content: " ";
-//	display: block;
-//	position: absolute;
-//	right: 20px;
-//	bottom: 0;
-//	left: 0;
-//	height: 3rem;
-//	background: linear-gradient(0deg, var(--accent10) 20%, transparent 100%);;
-//}
+.tacrGeoinvaze-case-select-content.showIntro .tacrGeoinvaze-case-select-content-intro-scroll {
+	position: relative;
+}
+.tacrGeoinvaze-case-select-content.showIntro .tacrGeoinvaze-case-select-content-intro-scroll > div {
+	height: 100%;
+	padding-bottom: 1rem;
+	overflow-y: auto;
+	padding-right: 2rem;
+}
+.tacrGeoinvaze-case-select-content.showIntro .tacrGeoinvaze-case-select-content-intro-scroll::after {
+  content: " ";
+	display: block;
+	position: absolute;
+	right: 20px;
+	bottom: 0;
+	left: 0;
+	height: 3rem;
+	background: linear-gradient(0deg, var(--base0) 20%, transparent 100%);;
+}
 
 .tacrGeoinvaze-case-select-content-link-home {
 	display: inline-block;
