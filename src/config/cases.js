@@ -1,4 +1,5 @@
-const nothing = "Data o výskytu doposud nejsou v databázi NDOP";
+const nothingNoData = "Data o výskytu doposud nejsou v databázi NDOP";
+const nothingOtherInstitution = "Druh je předmětem samostatného výzkumu prováděného VÚV TGM v.v.i.";
 const noModelsRandomExpansion = "Modely nelze vytvořit vzhledem k zcela náhodnému šíření druhů";
 const noModelsFreeExpansion = "Modely nelze vytvořit, jelikož se předpokládá samovolné šíření druhu ve volné přírodě (doposud neprokázáno)";
 const noGisModelUnknownEcology = "Modely budoucího rozšíření nelze vytvořit pro nedostatek dat o ekologických nárocích druhu";
@@ -27,10 +28,10 @@ export default {
 		// ambrosie
 		noGisModel: noGisModelUnsuitableEcology
 	},
-	"102e76d3-6307-4a26-ab8a-4ef5588570c7": {
-		// astra novobelgická
-		noGisModel: noGisModelUnsuitableEcology
-	},
+	// "102e76d3-6307-4a26-ab8a-4ef5588570c7": {
+	// 	// astra novobelgická
+	// 	noGisModel: noGisModelUnsuitableEcology
+	// },
 	"3e9a7970-9b1f-4cc5-99f8-93f0a091b53b": {
 		// borovice vejmutovka
 		noBiomodParticularModel: {
@@ -40,7 +41,7 @@ export default {
 	"5e3a1bb6-fddb-472c-a77f-1bf339aa726f": {
 		// dub červený
 		noBiomodParticularModel: {
-			noBiomodModelMAXENT
+			noBiomodModelMAXENT, noBiomodModelGBM
 		}
 	},
 	"da298627-95e4-4b8e-8b65-1dd46fa1346f": {
@@ -106,11 +107,11 @@ export default {
 	},
 	"64dace45-50b4-4349-9ee1-e28bd747c78d": {
 		// blěšivec velkohrbý
-		nothing
+		nothing: nothingNoData
 	},
 	"da8924f1-3c73-485b-8e0f-acc0d6650e8d": {
 		// krab čínský
-		nothing
+		nothing: nothingNoData
 	},
 	"dc301b57-6a6d-4f37-90a0-f98f71600b81": {
 		// norek americký
@@ -131,5 +132,18 @@ export default {
 	"ae694a84-4fda-400b-bf26-b78b4484b516": {
 		// vodní mor kanadský
 		noModels: noModelsRandomExpansion
+	},
+
+	"07d06cdd-8d38-4a43-87f2-c7e819ff3670": {
+		// rak mramorovaný
+		nothing: nothingOtherInstitution
+	},
+	"edb75be0-8f1d-46a2-b07a-af1874d88569": {
+		// rak pruhovaný
+		nothing: nothingOtherInstitution
+	},
+	"572b2ddf-d8d7-4a5b-9a30-92cf2c1d42bc": {
+		// rak signální
+		nothing: nothingOtherInstitution
 	},
 }
