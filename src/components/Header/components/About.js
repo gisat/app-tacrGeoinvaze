@@ -2,6 +2,7 @@ import React from 'react';
 
 export default props => (
 	<>
+		<p>Geoportál je zaměřen na zobrazení současného a predikovaného výskytu jednotlivých invazních nepůvodních druhů rostlin. Mapové výstupy predikcí je možné využít pro odhad dalšího šíření druhů a tento odhad začlenit do rozhodovacího procesu ohledně rizika rozšíření druhu do zájmové lokality (viz Metodika Monitoring ohrožení zájmových lokalit šířením invazních nepůvodních druhů). V širším pohledu slouží mapy geoportálu jako podklad pro plánování managementu krajiny na lokální úrovni.</p>
 
 		<h3>Zahrnuté druhy</h3>
 		<p>Mapové výstupy byly vytvořeny pro vybrané druhy vyskytující se ve volné krajině, mimo kultury a intravilán, a druhy s vysokým impaktem na přírodě blízká společenstva a ekosystémy. Pro potřeby portálu byly vybrány druhy na tzv. Unijním seznamu invazních druhů (seznam druhů k nařízení EU 1143/2014), druhy Černého a šedého seznamu ČR (Pergl et al. 2016) a některé druhy tzv. watch listu. Z watch listu byly vybrány druhy v současné době dosud nerozšířené, ale vykazující invazní chování v na jiných místech Evropy a z ekologického hlediska potenciálně schopné se šířit na naše území.</p>
